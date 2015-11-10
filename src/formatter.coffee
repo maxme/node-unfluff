@@ -2,13 +2,18 @@ stopwords = require("./stopwords")
 _ = require("lodash")
 {XRegExp} = require('xregexp')
 
-module.exports = formatter = (doc, topNode, language) ->
+module.exports.text = formatter = (doc, topNode, language) ->
   removeNegativescoresNodes(doc, topNode)
   linksToText(doc, topNode)
   addNewlineToBr(doc, topNode)
   replaceWithText(doc, topNode)
   removeFewwordsParagraphs(doc, topNode, language)
   return convertToText(doc, topNode)
+
+module.exports.html = formatter = (doc, topNode, language) ->
+  removeNegativescoresNodes(doc, topNode)
+  removeFewwordsParagraphs(doc, topNode, language)
+  return topNode.html()
 
 linksToText = (doc, topNode) ->
   nodes = topNode.find('a')

@@ -1,6 +1,7 @@
 _ = require("lodash")
 stopwords = require("./stopwords")
-formatter = require("./formatter")
+textFormatter = require("./formatter").text
+htmlFormatter = require("./formatter").html
 
 module.exports =
   # Grab the title of an html doc (excluding junk)
@@ -26,7 +27,15 @@ module.exports =
   text: (doc, topNode, lang) ->
     if topNode
       topNode = postCleanup(doc, topNode, lang)
-      formatter(doc, topNode, lang)
+      textFormatter(doc, topNode, lang)
+    else
+      ""
+
+  # Grab the 'main' text chunk
+  clean_html: (doc, topNode, lang) ->
+    if topNode
+      topNode = postCleanup(doc, topNode, lang)
+      htmlFormatter(doc, topNode, lang)
     else
       ""
 
