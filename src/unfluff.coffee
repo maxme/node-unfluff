@@ -1,6 +1,7 @@
 cheerio = require("cheerio")
 extractor = require("./extractor")
-cleaner = require("./cleaner")
+textCleaner = require("./cleaner").textCleaner
+htmlCleaner = require("./cleaner").htmlCleaner
 
 module.exports = unfluff = (html, language) ->
   doc = cheerio.load(html)
@@ -17,7 +18,7 @@ module.exports = unfluff = (html, language) ->
     image: extractor.image(doc)
 
   # Step 1: Clean the doc
-  cleaner(doc)
+  textCleaner(doc)
 
   # Step 2: Find the doc node with the best text
   topNode = extractor.calculateBestNode(doc, lng)
@@ -25,7 +26,12 @@ module.exports = unfluff = (html, language) ->
   # Step 3: Extract text, videos, images
   pageData.videos = extractor.videos(doc, topNode)
   pageData.text = extractor.text(doc, topNode, lng)
-  pageData.clean_html = extractor.clean_html(doc, topNode, lng)
+
+  # Step 4: Extract clean html
+  doc2 = cheerio.load(html)
+  htmlCleaner(doc2)
+  topNode2 = extractor.calculateBestNode(doc2, lng)
+  pageData.clean_html = extractor.clean_html(doc2, topNode2, lng)
 
   pageData
 
@@ -87,5 +93,5 @@ getTopNode = (doc, lng) ->
 getCleanedDoc = (html) ->
   return @cleanedDoc_ if @cleanedDoc_?
   doc = getParsedDoc.call(this, html)
-  @cleanedDoc_ = cleaner(doc)
+  @cleanedDoc_ = textCleaner(doc)
   @cleanedDoc_

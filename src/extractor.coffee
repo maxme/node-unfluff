@@ -34,7 +34,7 @@ module.exports =
   # Grab the 'main' text chunk
   clean_html: (doc, topNode, lang) ->
     if topNode
-      topNode = postCleanup(doc, topNode, lang)
+      #topNode = postCleanup(doc, topNode, lang)
       htmlFormatter(doc, topNode, lang)
     else
       ""

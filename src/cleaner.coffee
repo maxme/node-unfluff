@@ -1,6 +1,6 @@
 _ = require("lodash")
 
-module.exports = cleaner = (doc) ->
+module.exports.textCleaner = cleaner = (doc) ->
   removeBodyClasses(doc)
   cleanArticleTags(doc)
   cleanEmTags(doc)
@@ -20,6 +20,41 @@ module.exports = cleaner = (doc) ->
   divToPara(doc, 'div')
   divToPara(doc, 'span')
   return doc
+
+module.exports.htmlCleaner = cleaner = (doc) ->
+  removeBodyClasses(doc)
+  cleanArticleTags(doc)
+  cleanCodeBlocks(doc)
+  removeDropCaps(doc)
+  removeScriptsStyles(doc)
+  cleanBadTags(doc)
+  removeNodesRegex(doc, /^caption$/)
+  removeNodesRegex(doc, / google /)
+  removeNodesRegex(doc, /^[^entry-]more.*$/)
+  removeNodesRegex(doc, /[^-]facebook/)
+  removeNodesRegex(doc, /facebook-broadcasting/)
+  removeNodesRegex(doc, /[^-]twitter/)
+  cleanParaSpans(doc)
+  cleanUnderlines(doc)
+  cleanErrantLinebreaks(doc)
+  divToPara(doc, 'div')
+  divToPara(doc, 'span')
+  removeAllAttributes(doc)
+  removeNodeKeepChildren(doc, 'figure')
+  return doc
+
+removeNodeKeepChildren = (doc, nodeName) ->
+  doc(nodeName).each () ->
+    doc(this).replaceWith(doc(this).children())
+
+attrIsOk = (attr) ->
+  attr == 'src' || attr == 'href'
+
+removeAllAttributes = (doc) ->
+  doc('*').each () ->
+    attrs = doc(this)[0].attribs
+    doc(this)[0].attribs = {}
+    doc(this)[0].attribs[item] = attrs[item] for item in Object.keys(attrs) when attrIsOk(item)
 
 removeBodyClasses = (doc) ->
   doc("body").removeClass()

@@ -2,7 +2,7 @@ stopwords = require("./stopwords")
 _ = require("lodash")
 {XRegExp} = require('xregexp')
 
-module.exports.text = formatter = (doc, topNode, language) ->
+module.exports.text = formatterText = (doc, topNode, language) ->
   removeNegativescoresNodes(doc, topNode)
   linksToText(doc, topNode)
   addNewlineToBr(doc, topNode)
@@ -10,8 +10,9 @@ module.exports.text = formatter = (doc, topNode, language) ->
   removeFewwordsParagraphs(doc, topNode, language)
   return convertToText(doc, topNode)
 
-module.exports.html = formatter = (doc, topNode, language) ->
+module.exports.html = formatterHtml = (doc, topNode, language) ->
   removeNegativescoresNodes(doc, topNode)
+  # linksToText(doc, topNode)
   removeFewwordsParagraphs(doc, topNode, language)
   return topNode.html()
 
@@ -120,7 +121,7 @@ removeFewwordsParagraphs = (doc, topNode, language) ->
     text = el.text()
 
     stopWords = stopwords(text, language)
-    if (tag != 'br' || text != '\\r') && stopWords.stopwordCount < 3 && el.find("object").length == 0 && el.find("embed").length == 0
+    if (tag == 'div') && stopWords.stopwordCount < 5 && el.find("object").length == 0 && el.find("embed").length == 0
       doc(el).remove()
     else
       trimmed = text.trim()
