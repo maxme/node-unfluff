@@ -25,6 +25,7 @@ module.exports = unfluff = (html, language) ->
   # Step 3: Extract text, videos, images
   pageData.videos = extractor.videos(doc, topNode)
   pageData.text = extractor.text(doc, topNode, lng)
+  pageData.clean_html = extractor.clean_html(doc, topNode, lng)
 
   pageData
 
