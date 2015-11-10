@@ -120,7 +120,6 @@ removeFewwordsParagraphs = (doc, topNode, language) ->
     text = el.text()
 
     stopWords = stopwords(text, language)
-    console.log("Stop WORDS", stopWords)
     if (tag != 'br' || text != '\\r') && stopWords.stopwordCount < 3 && el.find("object").length == 0 && el.find("embed").length == 0
       doc(el).remove()
     else
