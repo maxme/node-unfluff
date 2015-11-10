@@ -19,7 +19,7 @@ module.exports = stopwords = (content, language = 'en') ->
   if cache.hasOwnProperty(language)
     stopWords = cache[language]
   else
-    stopWords = fs.readFileSync(filePath).toString().split('\n')
+    stopWords = fs.readFileSync(filePath).toString().split('\n').filter( (x) -> x.length >= 1)
     cache[language] = stopWords
 
   strippedInput = removePunctuation(content)
