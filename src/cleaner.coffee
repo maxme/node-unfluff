@@ -38,9 +38,12 @@ module.exports.htmlCleaner = cleaner = (doc) ->
   cleanUnderlines(doc)
   cleanErrantLinebreaks(doc)
   divToPara(doc, 'div')
-  divToPara(doc, 'span')
+  #divToPara(doc, 'span')
   removeAllAttributes(doc)
   removeNodeKeepChildren(doc, 'figure')
+  removeNodeKeepChildren(doc, 'span')
+  removeNodeKeepChildren(doc, 'div')
+  removeNodeKeepChildren(doc, 'aside')
   return doc
 
 removeNodeKeepChildren = (doc, nodeName) ->
@@ -50,11 +53,15 @@ removeNodeKeepChildren = (doc, nodeName) ->
 attrIsOk = (attr) ->
   attr == 'src' || attr == 'href'
 
+addSchemeToAttr = (attr) ->
+  return 'http:' + attr if attr.startsWith('//')
+  attr
+
 removeAllAttributes = (doc) ->
   doc('*').each () ->
     attrs = doc(this)[0].attribs
     doc(this)[0].attribs = {}
-    doc(this)[0].attribs[item] = attrs[item] for item in Object.keys(attrs) when attrIsOk(item)
+    doc(this)[0].attribs[item] = addSchemeToAttr(attrs[item]) for item in Object.keys(attrs) when attrIsOk(item)
 
 removeBodyClasses = (doc) ->
   doc("body").removeClass()
@@ -184,7 +191,7 @@ divToPara = (doc, domType) ->
   divs = doc(domType)
   lastCount = divs.length + 1
 
-  tags = ['a', 'blockquote', 'dl', 'div', 'img', 'ol', 'p', 'pre', 'table', 'ul']
+  tags = ['a', 'blockquote', 'dl', 'div', 'img', 'ol', 'p', 'pre', 'table', 'ul', 'span']
 
   divs.each () ->
     div = doc(this)
